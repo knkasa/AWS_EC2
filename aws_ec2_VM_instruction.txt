@@ -21,6 +21,7 @@ Launching EC2 as virtual machine.
   if you don't see "Tesla T4", you need to install driver 
   check "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/install-nvidia-driver.html?utm_source=chatgpt.com"
   or you could check https://www.nvidia.com/en-us/drivers/, type Tesla T4, windows 2022 os, ..., then download/install.  
+  In powershell, 
 $Bucket = "nvidia-gaming"
 $KeyPrefix = "windows/latest"
 $LocalPath = "$home\Desktop\NVIDIA"
@@ -33,4 +34,4 @@ foreach ($Object in $Objects) {
     }
 }
 
-15. 
+15. Start installing.
