@@ -1,0 +1,36 @@
+Launching EC2 as virtual machine.
+
+1. check "service quotas" in search bar.  If using cpu, skip.
+2. Choose EC2 service, and inside, search "Running On-Demand G and VT instances"
+3. Request 4 quota (4 vCPU), usually takes about an hour to approve.
+4. go to EC2 → Instances → Launch instances
+  OS = Microsoft Windows Server 2022 Base
+  instance = g4dn.xlarge
+  key-pair = create new key pair if not created. choose RSA & .pem
+5. create new security group (or use existing one if you want)
+6. For network, choose RDP only, and use "My IP".  0.0.0.0 means anyone can access.
+7. pick storage. 100GB and gp3. (note installing GPU driver needs a lot GB)
+8. Finnaly, click "launch instance"
+9. Go back to EC2, click instance, status check needs to be 3/3.
+9-2. Attach s3 policy to the current role.  click your instance->action->IAM role.
+10. select the instance, click connect, 
+11. click "RDP client", click "get password" and upload .pem file
+12. copy the decrypted password somewhere safe.
+13. Download remotedesktop file, enter user and password.
+14. Once in, open powershell, and run "Get-WmiObject Win32_VideoController | Select Name" to check if GPU is installed.
+  if you don't see "Tesla T4", you need to install driver 
+  check "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/install-nvidia-driver.html?utm_source=chatgpt.com"
+  or you could check https://www.nvidia.com/en-us/drivers/, type Tesla T4, windows 2022 os, ..., then download/install.  
+$Bucket = "nvidia-gaming"
+$KeyPrefix = "windows/latest"
+$LocalPath = "$home\Desktop\NVIDIA"
+$Objects = Get-S3Object -BucketName $Bucket -KeyPrefix $KeyPrefix -Region us-east-1
+foreach ($Object in $Objects) {
+    $LocalFileName = $Object.Key
+    if ($LocalFileName -ne '' -and $Object.Size -ne 0) {
+        $LocalFilePath = Join-Path $LocalPath $LocalFileName
+        Copy-S3Object -BucketName $Bucket -Key $Object.Key -LocalFile $LocalFilePath -Region us-east-1
+    }
+}
+
+15. 
